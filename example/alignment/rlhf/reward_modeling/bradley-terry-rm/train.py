@@ -2,7 +2,7 @@ import os
 import argparse
 import time
 from datasets import load_dataset
-from reward_modeling import DefaultRewardDataCollator, accuracy, BradleyTerryRMTrainer
+from RLHF.reward_modeling import DefaultRewardDataCollator, accuracy, BradleyTerryRMTrainer
 from utils.util import get_logger
 from transformers import TrainingArguments, AutoTokenizer, AutoModelForSequenceClassification
 from config import trainer_configs
