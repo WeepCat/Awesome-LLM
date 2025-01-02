@@ -24,20 +24,24 @@ class PrepareForMultiHeadAttention(nn.Module):
 
 class MultiHeadAttention(nn.Module):
 
-    def __init__(self, d_model: int, heads: int, dropout_prob: float = 0.1, bias: bool = True,
-                 use_drop_key: bool = False, mask_ratio: float = 0.3):
+    def __init__(
+            self,
+            d_model: int,
+            heads: int,
+            dropout_prob: float = 0.1,
+            bias: bool = True
+    ):
         super().__init__()
         self.d_k = d_model // heads
         self.heads = heads
         self.query = PrepareForMultiHeadAttention(d_model, heads, self.d_k, bias)
         self.key = PrepareForMultiHeadAttention(d_model, heads, self.d_k, bias)
         self.value = PrepareForMultiHeadAttention(d_model, heads, self.d_k, bias)
+        self.dropout = nn.Dropout(dropout_prob)
         self.scale = 1 / math.sqrt(self.d_k)
         self.softmax = nn.Softmax(dim=-1)
         self.output = nn.Linear(d_model, d_model)
         self.attn = None
-        self.use_drop_key = use_drop_key
-        self.mask_ratio = mask_ratio
 
     def get_score(self, query: torch.Tensor, key: torch.Tensor):
         score = torch.matmul(query, key.transpose(-2, -1))
@@ -86,9 +90,12 @@ class MultiHeadAttention(nn.Module):
             scores = scores.masked_fill(mask == 0, float('-inf'))
 
         attn = self.softmax(scores)
+        attn = self.dropout(attn)
         x = torch.matmul(attn, value)
         self.attn = attn.detach()
+
         x = x.transpose(1, 2).contiguous().view(batch_size, seq_len, -1)
+
         return self.output(x)
 
 

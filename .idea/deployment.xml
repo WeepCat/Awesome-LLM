@@ -5,7 +5,7 @@
       <paths name="root@connect.nma1.seetacloud.com:49556 password">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/root/autodl-tmp/Awesome-LLM-technical-routes" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
